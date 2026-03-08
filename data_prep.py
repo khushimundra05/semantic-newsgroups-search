@@ -3,13 +3,12 @@ from sentence_transformers import SentenceTransformer
 import chromadb
 import uuid
 
+# loading the 20newsgroups dataset
 print("Loading dataset...")
 
-newsgroups = fetch_20newsgroups(
-    subset="train",
-    remove=("headers", "footers", "quotes")
-)
+newsgroups = fetch_20newsgroups(subset="train", remove=("headers", "footers", "quotes"))
 
+# extracting information and storing in variables for later use
 documents = newsgroups.data
 labels = newsgroups.target
 categories = newsgroups.target_names
@@ -29,20 +28,14 @@ print("Connecting to ChromaDB...")
 
 client = chromadb.PersistentClient(path="./chromadb")
 
-collection = client.get_or_create_collection(
-    name="newsgroups_collection"
-)
+collection = client.get_or_create_collection(name="newsgroups_collection")
 
 print("Preparing metadata...")
 
 ids = [str(uuid.uuid4()) for _ in documents]
 
 metadatas = [
-    {
-        "category": categories[labels[i]],
-        "doc_id": i
-    }
-    for i in range(len(documents))
+    {"category": categories[labels[i]], "doc_id": i} for i in range(len(documents))
 ]
 
 print("Storing documents in ChromaDB...")
@@ -52,10 +45,10 @@ batch_size = 5000
 for i in range(0, len(documents), batch_size):
 
     collection.add(
-        ids=ids[i:i+batch_size],
-        embeddings=[e.tolist() for e in embeddings[i:i+batch_size]],
-        documents=documents[i:i+batch_size],
-        metadatas=metadatas[i:i+batch_size]
+        ids=ids[i : i + batch_size],
+        embeddings=[e.tolist() for e in embeddings[i : i + batch_size]],
+        documents=documents[i : i + batch_size],
+        metadatas=metadatas[i : i + batch_size],
     )
 
     print(f"Inserted batch {i} → {min(i+batch_size, len(documents))}")
