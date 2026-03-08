@@ -111,6 +111,9 @@ python data_prep.py
 Run clustering
 python clustering.py
 
+# Author
+Khushi Mundra
+
 Start API
 uvicorn main:app --reload
 
