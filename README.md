@@ -111,11 +111,11 @@ python data_prep.py
 Run clustering
 python clustering.py
 
-# Author
-Khushi Mundra
-
 Start API
 uvicorn main:app --reload
 
 Open
 http://127.0.0.1:8000/docs
+
+# Author
+Khushi Mundra
